@@ -8,6 +8,9 @@ import CoverImage from "../../cover-image";
 
 import { Markdown } from "../../../lib/markdown";
 import { getAllPosts, getPostAndMorePosts } from "@/lib/api";
+import { documentToReactComponents } from "@contentful/rich-text-react-renderer";
+import { BLOCKS } from "@contentful/rich-text-types";
+import Image from "next/image";
 
 export async function generateStaticParams() {
   const allPosts = await getAllPosts(false);
@@ -15,6 +18,41 @@ export async function generateStaticParams() {
   return allPosts.map((post) => ({
     slug: post.slug,
   }));
+}
+
+interface Asset {
+  sys: {
+    id: string;
+  };
+  url: string;
+  description: string;
+}
+
+interface AssetLink {
+  block: Asset[];
+}
+
+interface Content {
+  json: any;
+  links: {
+    assets: AssetLink;
+  };
+}
+
+function RichTextAsset({
+  id,
+  assets,
+}: {
+  id: string;
+  assets: Asset[] | undefined;
+}) {
+  const asset = assets?.find((asset) => asset.sys.id === id);
+
+  if (asset?.url) {
+    return <Image src={asset.url} layout="fill" alt={asset.description} />;
+  }
+
+  return null;
 }
 
 export default async function PostPage({
@@ -58,7 +96,17 @@ export default async function PostPage({
 
         <div className="mx-auto max-w-2xl">
           <div className="prose">
-            <Markdown content={post.content} />
+            {documentToReactComponents(post.content.json, {
+    renderNode: {
+      [BLOCKS.EMBEDDED_ASSET]: (node: any) => (
+        <RichTextAsset
+          id={node.data.target.sys.id}
+          assets={post.content.links.assets.block}
+        />
+      ),
+    },
+  })}
+
           </div>
         </div>
       </article>
