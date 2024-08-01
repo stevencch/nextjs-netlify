@@ -12,9 +12,12 @@
     "typecheck": "tsc --noEmit",
     "format:write": "prettier --write \"**/*.{ts,tsx,mdx}\" --cache",
     "format:check": "prettier --check \"**/*.{ts,tsx,mdx}\" --cache",
-    "setup": "node ./lib/setup.js"
+    "setup": "node ./lib/setup.js",
+    "graphql-codegen:generate": "graphql-codegen -r dotenv/config --config codegen.ts typescript-graphql-request ",
+    "graphql-codegen:watch": "graphql-codegen --watch -r dotenv/config --config codegen.ts typescript-graphql-request "
   },
   "dependencies": {
+    "@apollo/client": "^3.11.2",
     "@contentful/rich-text-react-renderer": "^15.22.9",
     "@hookform/resolvers": "^3.9.0",
     "@netlify/functions": "^2.8.1",
@@ -24,7 +27,9 @@
     "@radix-ui/react-toast": "^1.2.1",
     "class-variance-authority": "^0.4.0",
     "clsx": "^1.2.1",
+    "contentful": "^10.13.1",
     "contentful-import": "^9.4.56",
+    "graphql": "^16.9.0",
     "lucide-react": "0.105.0-alpha.4",
     "next": "^13.4.8",
     "next-themes": "^0.2.1",
@@ -37,6 +42,10 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@graphql-codegen/cli": "^5.0.2",
+    "@graphql-codegen/client-preset": "^4.3.3",
+    "@graphql-codegen/introspection": "^4.0.3",
+    "@graphql-codegen/typescript-graphql-request": "^6.2.0",
     "@ianvs/prettier-plugin-sort-imports": "^3.7.2",
     "@types/node": "^17.0.45",
     "@types/react": "^18.2.14",

@@ -9,7 +9,10 @@ import Date from "./date";
 import { getAllPosts } from "@/lib/api";
 import { draftMode } from "next/headers";
 import MoreStories from "./more-stories";
+import { client } from '../lib/client';
+import { ApolloClient, InMemoryCache, ApolloProvider, gql } from '@apollo/client';
 
+var contentful = require('contentful');
 function HeroPost({
   title,
   coverImage,
@@ -55,8 +58,46 @@ export default async function IndexPage() {
   const allPosts = await getAllPosts(isEnabled);
   const heroPost = allPosts[0];
   const morePosts = allPosts.slice(1);
+
+  var client = contentful.createClient({
+    space: process.env.CONTENTFUL_SPACE_ID!,
+    accessToken: process.env.CONTENTFUL_ACCESS_TOKEN!,
+  });
+
+  const postData=await client.getEntry('6DI5LRjZboauqOYqPk3ydA');
+  //console.log(postData);
+
+  const apolloClient = new ApolloClient({
+    uri: `https://graphql.contentful.com/content/v1/spaces/${process.env.CONTENTFUL_SPACE_ID}/environments/master?access_token=${process.env.CONTENTFUL_ACCESS_TOKEN}`,
+    cache: new InMemoryCache(),
+  });
+  const postData1=await apolloClient.query({
+    query: gql`query{
+  postCollection(order: date_DESC) {
+    items {
+      slug
+      title
+      coverImage {
+        url
+      }
+      date
+      author {
+        name
+        picture {
+          url
+        }
+      }
+      excerpt
+    }
+  }
+}`,
+  });
+
+  console.log(postData1);
   return (
     <section className="container grid items-center gap-6 pb-8 pt-6 md:py-10">
+      <h1>{postData1.data.postCollection.items[0].slug}</h1>
+      <h2>{postData.fields.title}</h2>
       <div className="container mx-auto px-5">
       {heroPost && (
         <HeroPost
