@@ -937,7 +937,33 @@ export type CfAuthorNestedFilter = {
   sys?: InputMaybe<SysFilter>;
 };
 
+export type AllPostsQueryVariables = Exact<{ [key: string]: never; }>;
 
+
+export type AllPostsQuery = { __typename?: 'Query', postCollection?: { __typename?: 'PostCollection', items: Array<{ __typename?: 'Post', slug?: string | null, title?: string | null, date?: any | null, excerpt?: string | null, coverImage?: { __typename?: 'Asset', url?: string | null } | null, author?: { __typename?: 'Author', name?: string | null, picture?: { __typename?: 'Asset', url?: string | null } | null } | null } | null> } | null };
+
+
+export const AllPostsDocument = gql`
+    query allPosts {
+  postCollection(order: date_DESC) {
+    items {
+      slug
+      title
+      coverImage {
+        url
+      }
+      date
+      author {
+        name
+        picture {
+          url
+        }
+      }
+      excerpt
+    }
+  }
+}
+    `;
 
 export type SdkFunctionWrapper = <T>(action: (requestHeaders?:Record<string, string>) => Promise<T>, operationName: string, operationType?: string, variables?: any) => Promise<T>;
 
@@ -946,7 +972,9 @@ const defaultWrapper: SdkFunctionWrapper = (action, _operationName, _operationTy
 
 export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = defaultWrapper) {
   return {
-
+    allPosts(variables?: AllPostsQueryVariables, requestHeaders?: GraphQLClientRequestHeaders): Promise<AllPostsQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<AllPostsQuery>(AllPostsDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'allPosts', 'query', variables);
+    }
   };
 }
 export type Sdk = ReturnType<typeof getSdk>;

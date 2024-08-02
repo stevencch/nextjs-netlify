@@ -1,0 +1,19 @@
+query allPosts{
+  postCollection(order: date_DESC) {
+    items {
+      slug
+      title
+      coverImage {
+        url
+      }
+      date
+      author {
+        name
+        picture {
+          url
+        }
+      }
+      excerpt
+    }
+  }
+}

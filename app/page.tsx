@@ -58,13 +58,16 @@ export default async function IndexPage() {
   const allPosts = await getAllPosts(isEnabled);
   const heroPost = allPosts[0];
   const morePosts = allPosts.slice(1);
+  
+  const data2=await client.allPosts();
 
-  var client = contentful.createClient({
+
+  const contentfulClient = contentful.createClient({
     space: process.env.CONTENTFUL_SPACE_ID!,
     accessToken: process.env.CONTENTFUL_ACCESS_TOKEN!,
   });
 
-  const postData=await client.getEntry('6DI5LRjZboauqOYqPk3ydA');
+  const postData=await contentfulClient.getEntry('6DI5LRjZboauqOYqPk3ydA');
   //console.log(postData);
 
   const apolloClient = new ApolloClient({
@@ -96,6 +99,7 @@ export default async function IndexPage() {
   console.log(postData1);
   return (
     <section className="container grid items-center gap-6 pb-8 pt-6 md:py-10">
+      <h1>{data2.postCollection?.items[0]?.author?.name}</h1>
       <h1>{postData1.data.postCollection.items[0].slug}</h1>
       <h2>{postData.fields.title}</h2>
       <div className="container mx-auto px-5">
