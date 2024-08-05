@@ -11,6 +11,7 @@ import { draftMode } from "next/headers";
 import MoreStories from "./more-stories";
 import { client } from '../lib/client';
 import { ApolloClient, InMemoryCache, ApolloProvider, gql } from '@apollo/client';
+import AuthPart from "@/components/auth-part";
 
 var contentful = require('contentful');
 function HeroPost({
@@ -99,7 +100,12 @@ export default async function IndexPage() {
   console.log(postData1);
   return (
     <section className="container grid items-center gap-6 pb-8 pt-6 md:py-10">
-      <h1>{data2.postCollection?.items[0]?.author?.name}</h1>
+      <AuthPart/>
+      <h1>Env: {process.env.NODE_ENV}</h1>
+      <hr/>
+      <h1>{data2.postCollection?.items[0]?.author?.name
+        
+        }</h1>
       <h1>{postData1.data.postCollection.items[0].slug}</h1>
       <h2>{postData.fields.title}</h2>
       <div className="container mx-auto px-5">
